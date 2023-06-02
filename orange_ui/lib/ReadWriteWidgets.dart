@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 List<dynamic> src = nullptr as List; //not? dynamic?
 List<dynamic> dst = nullptr as List;
@@ -11,14 +13,15 @@ class ReadWriteWidgets extends StatefulWidget {
   _ReadWriteWidgetsState createState() => _ReadWriteWidgetsState();
 }
 
-TextEditingController SRC = TextEditingController();
-TextEditingController DST = TextEditingController();
-TextEditingController ERD = TextEditingController();
-TextEditingController DATA = TextEditingController();
-
-double boxWidth = 175;
-
 class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
+  TextEditingController SRC = TextEditingController();
+  TextEditingController DST = TextEditingController();
+  TextEditingController ERD = TextEditingController();
+  TextEditingController DATA = TextEditingController();
+  TextEditingController name = TextEditingController();
+
+  double boxWidth = 175;
+
   late List<bool> isSelected;
 
   @override
@@ -29,27 +32,29 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
 
   @override
   Widget build(BuildContext context) {
-    return ListBody(
+    return ListView(
+      shrinkWrap: true,
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        const SizedBox(
+          height: 20,
+        ),
+        Wrap(
           children: <Widget>[
             // Invoke "debug painting" (press "p" in the console, or the "Toggle Debug Paint" command in Visual Studio Code)
             // to see the wireframe for each widget
             Container(
                 padding: const EdgeInsets.all(10),
                 width: boxWidth,
-                child: TextFormField(
-                  //controller: SRC,
+                child: TextField(
+                  controller: SRC,
                   decoration: const InputDecoration(
                       labelText: 'SRC', border: OutlineInputBorder()),
                 )),
             Container(
               padding: const EdgeInsets.all(10),
               width: boxWidth,
-              child: TextFormField(
-                //controller: DST,
+              child: TextField(
+                controller: DST,
                 decoration: const InputDecoration(
                     labelText: 'DST', border: OutlineInputBorder()),
               ),
@@ -57,8 +62,8 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             Container(
               padding: const EdgeInsets.all(10),
               width: boxWidth,
-              child: TextFormField(
-                // controller: ERD,
+              child: TextField(
+                controller: ERD,
                 decoration: const InputDecoration(
                     labelText: 'ERD', border: OutlineInputBorder()),
               ),
@@ -66,10 +71,19 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             Container(
               padding: const EdgeInsets.all(10),
               width: boxWidth,
-              child: TextFormField(
-                //controller: DATA,
+              child: TextField(
+                controller: DATA,
                 decoration: const InputDecoration(
                     labelText: 'DATA', border: OutlineInputBorder()),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              width: boxWidth,
+              child: TextField(
+                controller: name,
+                decoration: const InputDecoration(
+                    labelText: 'Name', border: OutlineInputBorder()),
               ),
             ),
             Container(
@@ -92,12 +106,80 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                 children: const [Text('Read'), Text('Write')],
               ),
             ),
-            Container(
-                padding: const EdgeInsets.all(10),
-                child: const Text('Output?', style: TextStyle(fontSize: 30)))
           ],
-        )
+        ),
+        Center(
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.green)),
+                onPressed: () {
+                  saveLocally();
+                },
+                child: const Text('Save'))),
+        const SizedBox(
+          height: 30,
+        ),
+        FutureBuilder<List<String>>(
+            future: getDataLocally(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError ||
+                  !snapshot.hasData ||
+                  snapshot.connectionState == ConnectionState.waiting) {
+                return Container();
+              }
+              return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    Map map = jsonDecode(snapshot.data![index]);
+                    return Center(
+                      child: SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              name.text = map['name'];
+                              SRC.text = map['SRC'];
+                              DST.text = map['DST'];
+                              ERD.text = map['ERD'];
+                              DATA.text = map['DATA'];
+                              setState(() {});
+                            },
+                            child: Text(map['name'])),
+                      ),
+                    );
+                  });
+            })
       ],
     );
+  }
+
+  saveLocally() async {
+    bool alreadyExists = false;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> list = preferences.getStringList('data') ?? [];
+    for (var element in list) {
+      if (jsonDecode(element)['name'] == name.text) {
+        alreadyExists = true;
+      }
+    }
+    if (!alreadyExists) {
+      list.insert(
+          0,
+          jsonEncode({
+            'name': name.text,
+            'SRC': SRC.text,
+            'DST': DST.text,
+            'ERD': ERD.text,
+            'DATA': DATA.text,
+          }));
+      preferences.setStringList('data', list);
+      setState(() {});
+    }
+  }
+
+  Future<List<String>> getDataLocally() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> list = preferences.getStringList('data') ?? [];
+    return list;
   }
 }
