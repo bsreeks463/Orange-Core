@@ -50,42 +50,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-    // ignore: non_constant_identifier_names
-    List<ReadWriteWidgets> rw_WidgetList = [];
+  // ignore: non_constant_identifier_names
+  List<ReadWriteWidgets> rw_WidgetList = [];
 
-    @override
-    Widget build(BuildContext context) {
-      return DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            appBar: AppBar(
-              bottom: const TabBar(
-                  indicatorColor: Colors.black,
-                  labelStyle:
-                  TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
-                  tabs: [Tab(text: ('Read & Write')), Tab(text: 'Subscribe')]),
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text(widget.title),
-            ),
-            body: TabBarView(children: [
-              ListView.builder(
-                  itemCount: rw_WidgetList.length,
-                  itemBuilder: (context, index) {
-                    return rw_WidgetList[index];
-                  }),
-              const Text('Subscription Page')
-            ]),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                setState(() {
-                  rw_WidgetList.add(ReadWriteWidgets());
-                });
-              },
-              tooltip: 'add data fields',
-              child: const Icon(Icons.add),
-            ),
-          ));
-    }
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: const TabBar(
+                indicatorColor: Colors.black,
+                labelStyle:
+                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+                tabs: [Tab(text: ('Read & Write')), Tab(text: 'Subscribe')]),
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            title: Text(widget.title),
+          ),
+          body: TabBarView(
+              children: [ReadWriteWidgets(), const Text('Subscription Page')]),
+        ));
+  }
 }
