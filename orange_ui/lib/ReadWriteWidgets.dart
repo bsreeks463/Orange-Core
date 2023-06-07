@@ -48,7 +48,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             height: 20,
           ),
           if (showFiledBuilder) fieldBuilder(),
-          if (showDataBuilder) fieldBuilder(isEditable: true),
+          if (showDataBuilder) showBuilder(),
           const SizedBox(
             height: 30,
           ),
@@ -167,6 +167,48 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                 saveLocally();
               },
               child: const Text('Create')),
+      ],
+    );
+  }
+
+  Wrap showBuilder() {
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        Container(
+            height: 60,
+            padding: const EdgeInsets.all(10),
+            width: boxWidth,
+            child: Text("SRC: ${SRC.text}")),
+        Container(
+            height: 60,
+            padding: const EdgeInsets.all(10),
+            width: boxWidth,
+            child: Text("DST: ${DST.text}")),
+        Container(
+            height: 60,
+            padding: const EdgeInsets.all(10),
+            width: boxWidth,
+            child: Text("ERD: ${ERD.text}")),
+        Container(
+            height: 60,
+            padding: const EdgeInsets.all(10),
+            width: boxWidth,
+            child: Text("DATA: ${DATA.text}")),
+        Container(
+            height: 60,
+            padding: const EdgeInsets.all(10),
+            width: boxWidth,
+            child: Text("Name: ${name.text}")),
+        Container(
+          padding: const EdgeInsets.all(10),
+          child: ToggleButtons(
+            textStyle: const TextStyle(fontSize: 18),
+            onPressed: (int index) {},
+            isSelected: isSelected,
+            children: const [Text('Read'), Text('Write')],
+          ),
+        ),
       ],
     );
   }
