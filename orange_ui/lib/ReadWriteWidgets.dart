@@ -29,16 +29,18 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showFiledBuilder = true;
-          showDataBuilder = false;
-          clearData();
-          setState(() {});
-        },
-        tooltip: 'add data fields',
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: showFiledBuilder
+          ? Container()
+          : FloatingActionButton(
+              onPressed: () {
+                showFiledBuilder = true;
+                showDataBuilder = false;
+                clearData();
+                setState(() {});
+              },
+              tooltip: 'add data fields',
+              child: const Icon(Icons.add),
+            ),
       body: ListView(
         shrinkWrap: true,
         children: <Widget>[
