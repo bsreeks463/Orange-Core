@@ -1,13 +1,21 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:orange_ui/personality.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ReadWriteWidgets extends StatefulWidget {
+  final GeaSocketBindings geaBus;
+  ReadWriteWidgets({required this.geaBus});
+
   _ReadWriteWidgetsState createState() => _ReadWriteWidgetsState();
 }
 
 class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
+  _ReadWriteWidgetsState(this.geaBus);
+
+  final GeaSocketBindings geaBus;
+  int _personality = 1;
   TextEditingController SRC = TextEditingController();
   TextEditingController DST = TextEditingController();
   TextEditingController ERD = TextEditingController();
@@ -164,6 +172,14 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
+                //  geaBus.readErd(address: 0xC0, erd: 0x0035);
+                // geaBus.sendGeaMessage(destination: 0xFF, payload: [0x01]);
+                //    geaBus.writeErd(
+                //     address: 0xC0,
+                //     erd: 0x0035,
+                //     converter: Personality(_personality));
+                // _personality++;
+
                 saveLocally();
               },
               child: const Text('Create')),

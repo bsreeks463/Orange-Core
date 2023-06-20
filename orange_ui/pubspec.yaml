@@ -35,12 +35,13 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  path_provider: ^2.0.15
   shared_preferences: ^2.1.1
-  # dartgeasocketbindings:
-  #   git:
-  #     url: https://github.com/geappliances/connected.socket.git
-  #     path: dartgeasocketbindings
-  #     ref: b2c62cb0ebaf988f1cdd1d6cbbccade803e4bd57
+  dartgeasocketbindings:
+    git:
+      url: https://github.com/geappliances/connected.socket.git
+      path: dartgeasocketbindings
+      ref: b2c62cb0ebaf988f1cdd1d6cbbccade803e4bd57
 
 dev_dependencies:
   flutter_test:
