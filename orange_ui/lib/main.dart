@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: const MyHomePage(
+      home: MyHomePage(
         title: 'Orange UI',
         geaBus: geaBus,
       ),
@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   final GeaSocketBindings geaBus;
 
-  const MyHomePage({super.key, required this.title, this.geaBus});
+  const MyHomePage({super.key, required this.title, required this.geaBus});
 
   final String title;
 
@@ -104,8 +104,12 @@ class _MyHomePageState extends State<MyHomePage> {
             // the App.build method, and use it to set our appbar title.
             title: Text(widget.title),
           ),
-          body: TabBarView(
-              children: [ReadWriteWidgets(), const Text('Subscription Page')]),
+          body: TabBarView(children: [
+            ReadWriteWidgets(
+              geaBus: widget.geaBus,
+            ),
+            const Text('Subscription Page')
+          ]),
         ));
   }
 }

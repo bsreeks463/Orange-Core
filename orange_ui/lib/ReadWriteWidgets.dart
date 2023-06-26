@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dartgeasocketbindings/gea_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:orange_ui/personality.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +9,7 @@ class ReadWriteWidgets extends StatefulWidget {
   final GeaSocketBindings geaBus;
   ReadWriteWidgets({required this.geaBus});
 
-  _ReadWriteWidgetsState createState() => _ReadWriteWidgetsState();
+  _ReadWriteWidgetsState createState() => _ReadWriteWidgetsState(this.geaBus);
 }
 
 class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
