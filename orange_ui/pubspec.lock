@@ -49,6 +49,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  dartgeasocketbindings:
+    dependency: "direct main"
+    description:
+      path: dartgeasocketbindings
+      ref: b2c62cb0ebaf988f1cdd1d6cbbccade803e4bd57
+      resolved-ref: b2c62cb0ebaf988f1cdd1d6cbbccade803e4bd57
+      url: "https://github.com/geappliances/connected.socket.git"
+    source: git
+    version: "1.1.8"
   fake_async:
     dependency: transitive
     description:
