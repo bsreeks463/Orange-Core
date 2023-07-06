@@ -41,7 +41,7 @@ dependencies:
     git:
       url: https://github.com/geappliances/connected.socket.git
       path: dartgeasocketbindings
-      ref: b2c62cb0ebaf988f1cdd1d6cbbccade803e4bd57
+     # ref: b2c62cb0ebaf988f1cdd1d6cbbccade803e4bd57
 
 dev_dependencies:
   flutter_test:

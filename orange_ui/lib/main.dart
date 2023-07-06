@@ -4,20 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'ReadWriteWidgets.dart';
-import 'externaldatasource.dart';
+//import 'externaldatasource.dart';
 import 'personality.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final tempDir = await getTemporaryDirectory();
   Map<int, StructConverter Function(List<int>)> erdMap = {
     0x0035: (struct) => Personality.fromStruct(struct)
   };
 
+
   final geaBus = GeaSocketBindings(
-    path: tempDir.path + '/geasocket',
-    useMockServer: true,
-    serverArgs: ExternalDataSourceArgs(externalDataSource, publicErdMap, 1),
+    path: 'dev/socket/geasocket'
   )
     ..erdStream.listen((ErdMessage args) {
       print(
@@ -44,9 +42,7 @@ Future<void> main() async {
         applicationAddress: 0x9F,
         subscriptionAddresses: [0xC0],
         clientArgs: const ExternalDataSourceArgs.noDataSource())
-    ..writeErd(address: 0xC0, erd: 0x0035, converter: Personality(0))
-    ..addMockServerErdHeartbeat(
-        erdHeartbeatConfiguration: erdHeartbeatConfiguration);
+    ..writeErd(address: 0xC0, erd: 0x0035, converter: Personality(0));
   print('Library version: ' + geaBus.version);
   print('Git Hash: ' + geaBus.gitHash);
   runApp(MyApp(geaBus));
