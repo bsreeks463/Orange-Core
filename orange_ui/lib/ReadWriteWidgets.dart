@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:dartgeasocketbindings/gea_bus.dart';
 import 'package:flutter/material.dart';
-import 'package:orange_ui/personality.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'personality.dart';
 
 class ReadWriteWidgets extends StatefulWidget {
   final GeaSocketBindings geaBus;
@@ -89,6 +90,16 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                                 showDataBuilder = true;
                                 showFiledBuilder = false;
                                 setState(() {});
+                                if (!map['isRead']) {
+                                  geaBus.sendGeaMessage(
+                                      destination: 0xFF, payload: [0x01]);
+                                } else {
+                                  geaBus.writeErd(
+                                      address: 0xC0,
+                                      erd: 0x0035,
+                                      converter: Personality(_personality));
+                                  _personality++;
+                                }
                               },
                               child: Text(map['name'])),
                         ),
@@ -174,12 +185,6 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                   backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
                 //  geaBus.readErd(address: 0xC0, erd: 0x0035);
-                // geaBus.sendGeaMessage(destination: 0xFF, payload: [0x01]);
-                //    geaBus.writeErd(
-                //     address: 0xC0,
-                //     erd: 0x0035,
-                //     converter: Personality(_personality));
-                // _personality++;
 
                 saveLocally();
               },
