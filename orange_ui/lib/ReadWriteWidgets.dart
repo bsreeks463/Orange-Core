@@ -34,8 +34,28 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   @override
   void initState() {
     isSelected = [true, false];
+    widget.geaBus.geaMessageStream.listen((GeaMessage message) {
+      print(
+          'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length '
+          '${message.payload.length}\n${message.payload}');
+      if (message.payload[0] != 161) {
+        textMessage = 'Read Failed';
+      } else if (message.payload[0] == 161) {
+        DATA.text = message.payload.last.toString();
+      }
+      if (message.payload[2] == 0) {
+        textMessage = 'Success';
+      } else if (message.payload[2] == 1) {
+        textMessage = 'ERD is not supported';
+      } else if (message.payload[2] == 2) {
+        textMessage = 'Busy';
+      }
+      setState(() {});
+    });
     super.initState();
   }
+
+  String textMessage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -78,37 +98,52 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                     itemBuilder: (context, index) {
                       Map map = jsonDecode(snapshot.data![index]);
                       return Center(
-                        child: SizedBox(
-                          width: 200,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                name.text = map['name'];
-                                SRC.text = map['SRC'];
-                                DST.text = map['DST'];
-                                ERD.text = map['ERD'];
-                                DATA.text = map['DATA'];
-                                isSelected = [map['isRead'], !map['isRead']];
-                                showDataBuilder = true;
-                                showFiledBuilder = false;
-                                setState(() {});
-                                if (map['isRead']) {
-                                  if (kDebugMode) {
-                                    print('READ ERD');
-                                  }
-                                  geaBus.readErd(
-                                      address: int.parse(DST.text),
-                                      erd: int.parse(ERD.text));
-                                } else {
-                                  if (kDebugMode) {
-                                    print('WRITE ERD');
-                                  }
-                                  geaBus.writeErd(
-                                      address: int.parse(DST.text),
-                                      erd: int.parse(ERD.text),
-                                      converter: Personality(int.parse(DATA.text)));
-                                }
-                              },
-                              child: Text(map['name'])),
+                        child: Row(
+                          children: [
+                            const Expanded(child: SizedBox.shrink()),
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    name.text = map['name'];
+                                    SRC.text = map['SRC'];
+                                    DST.text = map['DST'];
+                                    ERD.text = map['ERD'];
+                                    DATA.text = map['DATA'];
+                                    isSelected = [
+                                      map['isRead'],
+                                      !map['isRead']
+                                    ];
+                                    showDataBuilder = true;
+                                    showFiledBuilder = false;
+                                    setState(() {});
+                                    if (map['isRead']) {
+                                      if (kDebugMode) {
+                                        print('READ ERD');
+                                      }
+                                      geaBus.readErd(
+                                          address: int.parse(DST.text),
+                                          erd: int.parse(ERD.text));
+                                    } else {
+                                      if (kDebugMode) {
+                                        print('WRITE ERD');
+                                      }
+                                      geaBus.writeErd(
+                                          address: int.parse(DST.text),
+                                          erd: int.parse(ERD.text),
+                                          converter: Personality(
+                                              int.parse(DATA.text)));
+                                    }
+                                  },
+                                  child: Text(map['name'])),
+                            ),
+                            Expanded(
+                              child: Text(
+                                textMessage,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     });
