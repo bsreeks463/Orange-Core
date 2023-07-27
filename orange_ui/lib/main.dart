@@ -1,6 +1,7 @@
 import 'package:dartgeasocketbindings/gea_bus.dart';
 import 'package:dartgeasocketbindings/structconverter.dart';
 import 'package:flutter/material.dart';
+import 'package:orange_ui/signoflife.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'ReadWriteWidgets.dart';
@@ -10,7 +11,7 @@ import 'personality.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Map<int, StructConverter Function(List<int>)> erdMap = {
-    0x0035: (struct) => Personality.fromStruct(struct)
+    0x0900: (struct) => Personality.fromStruct(struct)
   };
 
 
@@ -23,7 +24,7 @@ Future<void> main() async {
     })
     ..rawErdStream.listen((RawErdMessage message) {
       print(
-          'Raw ERD ${message.erd.toRadixString(16)} from address ${message.address.toRadixString(16)}');
+          'Raw ERD ${message.erd.toRadixString(16)} from address ${message.address.toRadixString(16)}, with data ${message.erdData.toString()}');
     })
     ..activityStream.listen((ErdMessageActivity activity) {
       print(
@@ -33,16 +34,20 @@ Future<void> main() async {
                   ? ' on ERD ${activity.erd.toRadixString(16)}'
                   : ''));
     })
+
     ..geaMessageStream.listen((GeaMessage message) {
       print(
-          'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length ${message.payload.length}\n${message.payload}');
-    })
-    ..configure(
+          'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length '
+              '${message.payload.length}\n${message.payload}');
+    });
+    /*..configure(
         erdMap: erdMap,
         applicationAddress: 0x9F,
         subscriptionAddresses: [0xC0],
-        clientArgs: const ExternalDataSourceArgs.noDataSource())
-    ..writeErd(address: 0xC0, erd: 0x0035, converter: Personality(0));
+        clientArgs: const ExternalDataSourceArgs.noDataSource())*/
+    //..writeErd(address: 0xC0, erd: 0x0035, converter: Personality(1))
+    geaBus.writeErd(address: 0xC0, erd: 0x0900, converter: Personality(4));
+    geaBus.readErd(address: 0xC0, erd: 0x0900);
   print('Library version: ' + geaBus.version);
   print('Git Hash: ' + geaBus.gitHash);
   runApp(MyApp(geaBus));

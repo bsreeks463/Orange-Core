@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dartgeasocketbindings/gea_bus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -90,15 +91,21 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                                 showDataBuilder = true;
                                 showFiledBuilder = false;
                                 setState(() {});
-                                if (!map['isRead']) {
-                                  geaBus.sendGeaMessage(
-                                      destination: 0xFF, payload: [0x01]);
+                                if (map['isRead']) {
+                                  if (kDebugMode) {
+                                    print('READ ERD');
+                                  }
+                                  geaBus.readErd(
+                                      address: int.parse(DST.text),
+                                      erd: int.parse(ERD.text));
                                 } else {
+                                  if (kDebugMode) {
+                                    print('WRITE ERD');
+                                  }
                                   geaBus.writeErd(
-                                      address: 0xC0,
-                                      erd: 0x0035,
-                                      converter: Personality(_personality));
-                                  _personality++;
+                                      address: int.parse(DST.text),
+                                      erd: int.parse(ERD.text),
+                                      converter: Personality(int.parse(DATA.text)));
                                 }
                               },
                               child: Text(map['name'])),

@@ -3,12 +3,12 @@ import 'dart:ffi';
 import 'package:dartgeasocketbindings/structconverter.dart';
 
 class Personality extends StructConverter {
-  Personality(int value) : _personality = FieldConverter(value);
+  Personality(int value) : _personality = FieldConverter<Uint8>(value);
 
   Personality.fromStruct(List<int> struct)
       : _personality = FieldConverter.fromStruct(struct);
 
-  final FieldConverter<Uint32> _personality;
+  final FieldConverter<Uint8> _personality;
 
   int get personality => _personality.field;
 
