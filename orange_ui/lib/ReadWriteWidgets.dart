@@ -28,7 +28,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   double boxWidth = 175;
 
   late List<bool> isSelected;
-  bool showFiledBuilder = true;
+  bool showFiledBuilder = false;
   bool showDataBuilder = false;
 
   @override
