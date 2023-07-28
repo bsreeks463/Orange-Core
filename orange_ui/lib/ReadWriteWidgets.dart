@@ -28,7 +28,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   double boxWidth = 175;
 
   late List<bool> isSelected;
-  bool showFiledBuilder = true;
+  bool showFiledBuilder = false;
   bool showDataBuilder = false;
 
   @override
@@ -37,7 +37,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
     widget.geaBus.geaMessageStream.listen((GeaMessage message) {
       print(
           'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length '
-          '${message.payload.length}\n${message.payload}  ');
+          '${message.payload.length}\n${message.payload}');
       if (message.payload[0] != 161) {
         textMessage = 'Read Failed';
       } else if (message.payload[0] == 161) {
