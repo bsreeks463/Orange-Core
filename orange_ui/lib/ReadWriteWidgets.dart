@@ -133,6 +133,8 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                                           erd: int.parse(ERD.text),
                                           converter: Personality(
                                               int.parse(DATA.text)));
+                                      textMessage = 'Write ERD Success';
+                                      setState(() {});
                                     }
                                   },
                                   child: Text(map['name'])),

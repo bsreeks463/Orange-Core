@@ -40,8 +40,8 @@ Future<void> main() async {
         subscriptionAddresses: [0xC0],
         clientArgs: const ExternalDataSourceArgs.noDataSource())*/
   //..writeErd(address: 0xC0, erd: 0x0035, converter: Personality(1))
-  geaBus.writeErd(address: 0xC0, erd: 0x0900, converter: Personality(4));
-  geaBus.readErd(address: 0xC0, erd: 0x0900);
+  // geaBus.writeErd(address: 0xC0, erd: 0x0900, converter: Personality(4));
+  // geaBus.readErd(address: 0xC0, erd: 0x0900);
   print('Library version: ' + geaBus.version);
   print('Git Hash: ' + geaBus.gitHash);
   runApp(MyApp(geaBus));
