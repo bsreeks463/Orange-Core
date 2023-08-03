@@ -55,7 +55,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
     super.initState();
   }
 
-  String textMessage = '';
+  List<String> textMessage = [];
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +91,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                     snapshot.connectionState == ConnectionState.waiting) {
                   return Container();
                 }
+                textMessage = snapshot.data!.map((e) => '').toList();
                 return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
