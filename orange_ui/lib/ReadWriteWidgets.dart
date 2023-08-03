@@ -30,32 +30,40 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   late List<bool> isSelected;
   bool showFiledBuilder = false;
   bool showDataBuilder = false;
+  late Future<List<String>> savedData;
+  Future getCount() async {
+    textMessage = (await getDataLocally()).map((e) => '').toList();
+    setState(() {});
+  }
+
+  List<String> textMessage = [];
+  int currentButtonTapped = -1;
 
   @override
   void initState() {
     isSelected = [true, false];
+    getCount();
+    savedData = getDataLocally();
     widget.geaBus.geaMessageStream.listen((GeaMessage message) {
       print(
           'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length '
           '${message.payload.length}\n${message.payload}');
       if (message.payload[0] != 161) {
-        textMessage = 'Read Failed';
+        textMessage[currentButtonTapped] = 'Read Failed';
       } else if (message.payload[0] == 161) {
         DATA.text = message.payload.last.toString();
       }
       if (message.payload[2] == 0) {
-        textMessage = 'Success';
+        textMessage[currentButtonTapped] = 'Success';
       } else if (message.payload[2] == 1) {
-        textMessage = 'ERD is not supported';
+        textMessage[currentButtonTapped] = 'ERD is not supported';
       } else if (message.payload[2] == 2) {
-        textMessage = 'Busy';
+        textMessage[currentButtonTapped] = 'Busy';
       }
       setState(() {});
     });
     super.initState();
   }
-
-  List<String> textMessage = [];
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +92,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             height: 30,
           ),
           FutureBuilder<List<String>>(
-              future: getDataLocally(),
+              future: savedData,
               builder: (context, snapshot) {
                 if (snapshot.hasError ||
                     !snapshot.hasData ||
@@ -106,6 +114,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                               width: 200,
                               child: ElevatedButton(
                                   onPressed: () {
+                                    currentButtonTapped = index;
                                     name.text = map['name'];
                                     SRC.text = map['SRC'];
                                     DST.text = map['DST'];
@@ -134,7 +143,8 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                                           erd: int.parse(ERD.text),
                                           converter: Personality(
                                               int.parse(DATA.text)));
-                                      textMessage = 'Write ERD Success';
+                                      textMessage[currentButtonTapped] =
+                                          'Write ERD Success';
                                       setState(() {});
                                     }
                                   },
@@ -142,7 +152,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                             ),
                             Expanded(
                               child: Text(
-                                textMessage,
+                                textMessage.isEmpty ? '' : textMessage[index],
                                 style: const TextStyle(color: Colors.red),
                               ),
                             ),
@@ -304,6 +314,8 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
       clearData();
       showFiledBuilder = false;
       showDataBuilder = false;
+      textMessage.insert(0, '');
+      savedData = getDataLocally();
       setState(() {});
     }
   }
