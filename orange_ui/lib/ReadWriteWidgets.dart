@@ -38,6 +38,10 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
 
   List<String> textMessage = [];
   int currentButtonTapped = -1;
+  setMessage(String msg) {
+    if (currentButtonTapped == -1) return;
+    textMessage[currentButtonTapped] = 'Read Failed';
+  }
 
   @override
   void initState() {
@@ -49,16 +53,16 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
           'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length '
           '${message.payload.length}\n${message.payload}');
       if (message.payload[0] != 161) {
-        textMessage[currentButtonTapped] = 'Read Failed';
+        setMessage('Read Failed');
       } else if (message.payload[0] == 161) {
         DATA.text = message.payload.last.toString();
       }
       if (message.payload[2] == 0) {
-        textMessage[currentButtonTapped] = 'Success';
+        setMessage('Success');
       } else if (message.payload[2] == 1) {
-        textMessage[currentButtonTapped] = 'ERD is not supported';
+        setMessage('ERD is not supported');
       } else if (message.payload[2] == 2) {
-        textMessage[currentButtonTapped] = 'Busy';
+        setMessage('Busy');
       }
       print('All message list: $textMessage');
 
@@ -144,8 +148,8 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                                           erd: int.parse(ERD.text),
                                           converter: Personality(
                                               int.parse(DATA.text)));
-                                      textMessage[currentButtonTapped] =
-                                          'Write ERD Success';
+                                      setMessage('Write ERD Success');
+
                                       setState(() {});
                                     }
                                   },
