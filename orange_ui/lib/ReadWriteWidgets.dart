@@ -60,6 +60,8 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
       } else if (message.payload[2] == 2) {
         textMessage[currentButtonTapped] = 'Busy';
       }
+      print('All message list: $textMessage');
+
       setState(() {});
     });
     super.initState();
@@ -99,7 +101,6 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                     snapshot.connectionState == ConnectionState.waiting) {
                   return Container();
                 }
-                textMessage = snapshot.data!.map((e) => '').toList();
                 return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -240,7 +241,6 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                   backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
                 //  geaBus.readErd(address: 0xC0, erd: 0x0035);
-
                 saveLocally();
               },
               child: const Text('Create')),
