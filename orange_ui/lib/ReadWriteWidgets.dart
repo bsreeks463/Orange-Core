@@ -40,7 +40,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   int currentButtonTapped = -1;
   setMessage(String msg) {
     if (currentButtonTapped == -1) return;
-    textMessage[currentButtonTapped] = 'Read Failed';
+    textMessage[currentButtonTapped] = msg;
   }
 
   @override
