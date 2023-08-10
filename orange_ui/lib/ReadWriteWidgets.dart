@@ -81,6 +81,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                 showFiledBuilder = true;
                 showDataBuilder = false;
                 clearData();
+                SRC.text = '0x9f';
                 setState(() {});
               },
               tooltip: 'add data fields',
@@ -114,9 +115,11 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                       return Center(
                         child: Row(
                           children: [
-                            const Expanded(child: SizedBox.shrink()),
                             SizedBox(
-                              width: 200,
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: 160,
                               child: ElevatedButton(
                                   onPressed: () {
                                     currentButtonTapped = index;
