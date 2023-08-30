@@ -123,40 +123,19 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                               width: 160,
                               child: ElevatedButton(
                                   onPressed: () {
-                                    currentButtonTapped = index;
-                                    name.text = map['name'];
-                                    SRC.text = map['SRC'];
-                                    DST.text = map['DST'];
-                                    ERD.text = map['ERD'];
-                                    DATA.text = map['DATA'];
-                                    isSelected = [
-                                      map['isRead'],
-                                      !map['isRead']
-                                    ];
-                                    currentState = CurrentState.readOnly;
-                                    setState(() {});
-                                    if (map['isRead']) {
-                                      if (kDebugMode) {
-                                        print('READ ERD');
-                                      }
-                                      geaBus.readErd(
-                                          address: int.parse(DST.text),
-                                          erd: int.parse(ERD.text));
-                                    } else {
-                                      if (kDebugMode) {
-                                        print('WRITE ERD');
-                                      }
-                                      geaBus.writeErd(
-                                          address: int.parse(DST.text),
-                                          erd: int.parse(ERD.text),
-                                          converter: Personality(
-                                              int.parse(DATA.text)));
-                                      setMessage('Write ERD Success');
-
-                                      setState(() {});
-                                    }
+                                    onTapName(index, map);
                                   },
                                   child: Text(map['name'])),
+                            ),
+                            InkWell(
+                                onTap: () {
+                                  onTapName(index, map);
+                                  currentState = CurrentState.edit;
+                                  setState(() {});
+                                },
+                                child: Icon(Icons.edit)),
+                            const SizedBox(
+                              width: 10,
                             ),
                             Expanded(
                               child: Text(
@@ -172,6 +151,37 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
         ],
       ),
     );
+  }
+
+  void onTapName(int index, Map<dynamic, dynamic> map) {
+    currentButtonTapped = index;
+    name.text = map['name'];
+    SRC.text = map['SRC'];
+    DST.text = map['DST'];
+    ERD.text = map['ERD'];
+    DATA.text = map['DATA'];
+    isSelected = [map['isRead'], !map['isRead']];
+    currentState = CurrentState.readOnly;
+    setState(() {});
+    if (map['isRead']) {
+      textMessage[currentButtonTapped] = 'sucess';
+      setState(() {});
+      if (kDebugMode) {
+        print('READ ERD');
+      }
+      // geaBus.readErd(
+      //     address: int.parse(DST.text),
+      //     erd: int.parse(ERD.text));
+    } else {
+      if (kDebugMode) {
+        print('WRITE ERD');
+      }
+      // geaBus.writeErd(
+      //     address: int.parse(DST.text),
+      //     erd: int.parse(ERD.text),
+      //     converter: Personality(
+      //         int.parse(DATA.text)));
+    }
   }
 
   Wrap fieldBuilder({isEditable = false}) {
@@ -308,20 +318,16 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             children: const [Text('Read'), Text('Write')],
           ),
         ),
-        ElevatedButton(
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.amber)),
-            onPressed: () {
-              if (currentState == CurrentState.edit) {
+        if (currentState == CurrentState.edit)
+          ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.amber)),
+              onPressed: () {
                 currentState = CurrentState.readOnly;
                 setState(() {});
                 saveLocally();
-              } else {
-                currentState = CurrentState.edit;
-                setState(() {});
-              }
-            },
-            child: Text(currentState == CurrentState.edit ? 'save' : 'edit')),
+              },
+              child: const Text('save')),
       ],
     );
   }
