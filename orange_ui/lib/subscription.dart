@@ -16,7 +16,7 @@ class Subscription extends StatefulWidget {
 
 class _SubscriptionState extends State<Subscription> {
   _SubscriptionState(this.geaBus);
-
+  final GeaSocketBindings geaBus;
   List<String> messages = [];
 
   @override
