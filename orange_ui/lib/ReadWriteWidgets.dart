@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'personality.dart';
 
+enum CurrentState { edit, addNew, readOnly }
+
 class ReadWriteWidgets extends StatefulWidget {
   final GeaSocketBindings geaBus;
   ReadWriteWidgets({required this.geaBus});
@@ -28,8 +30,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   double boxWidth = 175;
 
   late List<bool> isSelected;
-  bool showFiledBuilder = false;
-  bool showDataBuilder = false;
+  var currentState = CurrentState.addNew;
   late Future<List<String>> savedData;
   Future getCount() async {
     textMessage = (await getDataLocally()).map((e) => '').toList();
@@ -74,12 +75,11 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: showFiledBuilder
+      floatingActionButton: currentState == CurrentState.addNew
           ? Container()
           : FloatingActionButton(
               onPressed: () {
-                showFiledBuilder = true;
-                showDataBuilder = false;
+                currentState = CurrentState.addNew;
                 clearData();
                 SRC.text = '0x9f';
                 setState(() {});
@@ -93,8 +93,8 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
           const SizedBox(
             height: 20,
           ),
-          if (showFiledBuilder) fieldBuilder(),
-          if (showDataBuilder) showBuilder(),
+          if (currentState == CurrentState.addNew) fieldBuilder(),
+          if (currentState != CurrentState.addNew) showBuilder(),
           const SizedBox(
             height: 30,
           ),
@@ -132,8 +132,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                                       map['isRead'],
                                       !map['isRead']
                                     ];
-                                    showDataBuilder = true;
-                                    showFiledBuilder = false;
+                                    currentState = CurrentState.readOnly;
                                     setState(() {});
                                     if (map['isRead']) {
                                       if (kDebugMode) {
@@ -274,6 +273,21 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             padding: const EdgeInsets.all(10),
             width: boxWidth,
             child: Text("ERD: ${ERD.text}")),
+        currentState == CurrentState.edit
+            ? Container(
+                padding: const EdgeInsets.all(10),
+                width: boxWidth,
+                child: TextField(
+                  controller: DATA,
+                  decoration: const InputDecoration(
+                      labelText: 'DATA', border: OutlineInputBorder()),
+                ),
+              )
+            : Container(
+                height: 60,
+                padding: const EdgeInsets.all(10),
+                width: boxWidth,
+                child: Text("DATA: ${DATA.text}")),
         Container(
             height: 60,
             padding: const EdgeInsets.all(10),
@@ -293,6 +307,20 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             children: const [Text('Read'), Text('Write')],
           ),
         ),
+        ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.amber)),
+            onPressed: () {
+              if (currentState == CurrentState.edit) {
+                currentState = CurrentState.readOnly;
+                setState(() {});
+                saveLocally();
+              } else {
+                currentState = CurrentState.edit;
+                setState(() {});
+              }
+            },
+            child: Text(currentState == CurrentState.edit ? 'save' : 'edit')),
       ],
     );
   }
@@ -301,9 +329,17 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
     bool alreadyExists = false;
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String> list = preferences.getStringList('data') ?? [];
-    for (var element in list) {
-      if (jsonDecode(element)['name'] == name.text) {
+    for (int i = 0; i < list.length; i++) {
+      if (jsonDecode(list[i])['name'] == name.text) {
         alreadyExists = true;
+        list[i] = jsonEncode({
+          'name': name.text,
+          'SRC': SRC.text,
+          'DST': DST.text,
+          'ERD': ERD.text,
+          'DATA': DATA.text,
+          'isRead': isSelected[0],
+        });
       }
     }
     if (!alreadyExists) {
@@ -317,14 +353,14 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             'DATA': DATA.text,
             'isRead': isSelected[0],
           }));
-      preferences.setStringList('data', list);
       clearData();
-      showFiledBuilder = false;
-      showDataBuilder = false;
+      currentState == CurrentState.readOnly;
       textMessage.insert(0, '');
       savedData = getDataLocally();
-      setState(() {});
     }
+    preferences.setStringList('data', list);
+    savedData = getDataLocally();
+    setState(() {});
   }
 
   clearData() {
