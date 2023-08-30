@@ -1,6 +1,7 @@
 import 'package:dartgeasocketbindings/gea_bus.dart';
 import 'package:dartgeasocketbindings/structconverter.dart';
 import 'package:flutter/material.dart';
+import 'package:orange_ui/subscription.dart';
 
 import 'ReadWriteWidgets.dart';
 //import 'externaldatasource.dart';
@@ -103,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ReadWriteWidgets(
               geaBus: widget.geaBus,
             ),
-            const Text('Subscription Page')
+            Subscription(geaBus: widget.geaBus)
           ]),
         ));
   }
