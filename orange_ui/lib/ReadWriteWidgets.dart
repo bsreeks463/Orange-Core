@@ -49,6 +49,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
     isSelected = [true, false];
     getCount();
     savedData = getDataLocally();
+
     widget.geaBus.geaMessageStream.listen((GeaMessage message) {
       print(
           'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length '
