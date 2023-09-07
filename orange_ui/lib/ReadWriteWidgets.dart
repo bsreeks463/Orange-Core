@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-// import 'package:dartgeasocketbindings/gea_bus.dart';
+import 'package:dartgeasocketbindings/gea_bus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

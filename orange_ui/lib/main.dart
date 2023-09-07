@@ -37,8 +37,8 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp(this.geaBus);
   // const MyApp();
+  const MyApp(this.geaBus);
 
   final GeaSocketBindings geaBus;
 

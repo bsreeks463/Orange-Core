@@ -38,10 +38,10 @@ dependencies:
   path_provider: ^2.0.15
   shared_preferences: ^2.1.1
   get:
-  # dartgeasocketbindings:
-  #   git:
-  #     url: https://github.com/geappliances/connected.socket.git
-  #     path: dartgeasocketbindings
+  dartgeasocketbindings:
+    git:
+      url: https://github.com/geappliances/connected.socket.git
+      path: dartgeasocketbindings
      # ref: b2c62cb0ebaf988f1cdd1d6cbbccade803e4bd57
 
 dev_dependencies:
