@@ -1,11 +1,11 @@
-import 'package:dartgeasocketbindings/gea_bus.dart';
-import 'package:dartgeasocketbindings/structconverter.dart';
+// import 'package:dartgeasocketbindings/gea_bus.dart';
+// import 'package:dartgeasocketbindings/structconverter.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:orange_ui/controllers/subscription.dart';
 import 'package:orange_ui/subscription.dart';
 
 import 'ReadWriteWidgets.dart';
-//import 'externaldatasource.dart';
-import 'personality.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,26 +30,15 @@ Future<void> main() async {
                   ? ' on ERD ${activity.erd.toRadixString(16)}'
                   : ''));
     });
-  // ..geaMessageStream.listen((GeaMessage message) {
-  //   print(
-  //       'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length '
-  //       '${message.payload.length}\n${message.payload}');
-  // });
-  /*..configure(
-        erdMap: erdMap,
-        applicationAddress: 0x9F,
-        subscriptionAddresses: [0xC0],
-        clientArgs: const ExternalDataSourceArgs.noDataSource())*/
-  //..writeErd(address: 0xC0, erd: 0x0035, converter: Personality(1))
-  // geaBus.writeErd(address: 0xC0, erd: 0x0900, converter: Personality(4));
-  // geaBus.readErd(address: 0xC0, erd: 0x0900);
-  print('Library version: ' + geaBus.version);
-  print('Git Hash: ' + geaBus.gitHash);
+  // print('Library version: ' + geaBus.version);
+  // print('Git Hash: ' + geaBus.gitHash);
+  // runApp(MyApp());
   runApp(MyApp(geaBus));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp(this.geaBus);
+  // const MyApp();
 
   final GeaSocketBindings geaBus;
 
@@ -65,6 +54,7 @@ class MyApp extends StatelessWidget {
         title: 'Orange UI',
         geaBus: geaBus,
       ),
+      // home: const MyHomePage(title: 'Orange UI'),
     );
   }
 }
@@ -73,6 +63,7 @@ class MyHomePage extends StatefulWidget {
   final GeaSocketBindings geaBus;
 
   const MyHomePage({super.key, required this.title, required this.geaBus});
+  // const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -83,6 +74,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // ignore: non_constant_identifier_names
   List<ReadWriteWidgets> rw_WidgetList = [];
+  SubscriptionController controller = Get.put(SubscriptionController());
+
+  int currentTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -90,21 +84,40 @@ class _MyHomePageState extends State<MyHomePage> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            bottom: const TabBar(
+            bottom: TabBar(
+                onTap: (i) {
+                  setState(() {
+                    currentTab = i;
+                  });
+                },
                 indicatorColor: Colors.black,
                 labelStyle:
-                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
-                tabs: [Tab(text: ('Read & Write')), Tab(text: 'Subscribe')]),
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                unselectedLabelStyle:
+                    const TextStyle(fontWeight: FontWeight.normal),
+                tabs: const [
+                  Tab(text: ('Read & Write')),
+                  Tab(text: 'Subscribe')
+                ]),
             title: Text(widget.title),
           ),
-          body: TabBarView(children: [
-            ReadWriteWidgets(
-              geaBus: widget.geaBus,
+          body: IndexedStack(index: currentTab, children: [
+            Visibility(
+              visible: currentTab == 0,
+              maintainState: true,
+              child: ReadWriteWidgets(
+                geaBus: widget.geaBus,
+              ),
             ),
-            Subscription(geaBus: widget.geaBus)
+            // Visibility(
+            //   maintainState: true,
+            //   child: ReadWriteWidgets(),
+            // ),
+            Visibility(
+              visible: currentTab == 1,
+              maintainState: true,
+              child: Subscription(),
+            ),
           ]),
         ));
   }

@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:dartgeasocketbindings/gea_bus.dart';
+// import 'package:dartgeasocketbindings/gea_bus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:orange_ui/controllers/subscription.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'personality.dart';
 
 enum CurrentState { edit, addNew, readOnly }
 
@@ -14,12 +14,14 @@ class ReadWriteWidgets extends StatefulWidget {
   ReadWriteWidgets({required this.geaBus});
 
   _ReadWriteWidgetsState createState() => _ReadWriteWidgetsState(this.geaBus);
+  // _ReadWriteWidgetsState createState() => _ReadWriteWidgetsState();
 }
 
 class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   _ReadWriteWidgetsState(this.geaBus);
 
   final GeaSocketBindings geaBus;
+
   int _personality = 1;
   TextEditingController SRC = TextEditingController();
   TextEditingController DST = TextEditingController();
@@ -44,6 +46,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
     textMessage[currentButtonTapped] = msg;
   }
 
+  var cont = Get.put(SubscriptionController());
   @override
   void initState() {
     isSelected = [true, false];
@@ -67,8 +70,10 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
         setMessage('Busy');
       }
       print('All message list: $textMessage');
-
       setState(() {});
+      cont.insertMessage(
+          'Message received from ${message.source.toRadixString(16)} intended for ${message.destination.toRadixString(16)} with length '
+          '${message.payload.length}\n${message.payload}');
     });
     super.initState();
   }
@@ -116,7 +121,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                       return Center(
                         child: Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             SizedBox(
@@ -127,13 +132,14 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                                   },
                                   child: Text(map['name'])),
                             ),
-                            InkWell(
-                                onTap: () {
-                                  onTapName(index, map);
-                                  currentState = CurrentState.edit;
-                                  setState(() {});
-                                },
-                                child: Icon(Icons.edit)),
+                            if (!map['isRead'])
+                              InkWell(
+                                  onTap: () {
+                                    onTapName(index, map);
+                                    currentState = CurrentState.edit;
+                                    setState(() {});
+                                  },
+                                  child: const Icon(Icons.edit)),
                             const SizedBox(
                               width: 10,
                             ),
@@ -169,18 +175,15 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
       if (kDebugMode) {
         print('READ ERD');
       }
-      // geaBus.readErd(
-      //     address: int.parse(DST.text),
-      //     erd: int.parse(ERD.text));
+      geaBus.readErd(address: int.parse(DST.text), erd: int.parse(ERD.text));
     } else {
       if (kDebugMode) {
         print('WRITE ERD');
       }
-      // geaBus.writeErd(
-      //     address: int.parse(DST.text),
-      //     erd: int.parse(ERD.text),
-      //     converter: Personality(
-      //         int.parse(DATA.text)));
+      geaBus.writeErd(
+          address: int.parse(DST.text),
+          erd: int.parse(ERD.text),
+          converter: Personality(int.parse(DATA.text)));
     }
   }
 
@@ -257,7 +260,11 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
-                //  geaBus.readErd(address: 0xC0, erd: 0x0035);
+                // geaBus.writeErd(
+                //     address: int.parse(DST.text),
+                //     erd: int.parse(ERD.text),
+                //     converter: Personality(
+                //         int.parse(DATA.text)));
                 saveLocally();
               },
               child: const Text('Create')),
@@ -303,11 +310,6 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             height: 60,
             padding: const EdgeInsets.all(10),
             width: boxWidth,
-            child: Text("DATA: ${DATA.text}")),
-        Container(
-            height: 60,
-            padding: const EdgeInsets.all(10),
-            width: boxWidth,
             child: Text("Name: ${name.text}")),
         Container(
           padding: const EdgeInsets.all(10),
@@ -318,7 +320,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             children: const [Text('Read'), Text('Write')],
           ),
         ),
-        if (currentState == CurrentState.edit)
+        if (currentState == CurrentState.edit && isSelected[1])
           ElevatedButton(
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.amber)),
