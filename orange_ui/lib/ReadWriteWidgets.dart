@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:orange_ui/controllers/subscription.dart';
+import 'package:orange_ui/personality.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum CurrentState { edit, addNew, readOnly }
