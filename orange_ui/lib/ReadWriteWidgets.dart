@@ -8,7 +8,7 @@ import 'package:orange_ui/controllers/subscription.dart';
 import 'package:orange_ui/personality.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum CurrentState { edit, addNew, readOnly }
+enum CurrentState { none, edit, addNew, readOnly }
 
 class ReadWriteWidgets extends StatefulWidget {
   final GeaSocketBindings geaBus;
@@ -33,7 +33,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
   double boxWidth = 175;
 
   late List<bool> isSelected;
-  var currentState = CurrentState.addNew;
+  var currentState = CurrentState.none;
   late Future<List<String>> savedData;
   Future getCount() async {
     textMessage = (await getDataLocally()).map((e) => '').toList();
@@ -101,7 +101,9 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
             height: 20,
           ),
           if (currentState == CurrentState.addNew) fieldBuilder(),
-          if (currentState != CurrentState.addNew) showBuilder(),
+          if (currentState == CurrentState.edit ||
+              currentState == CurrentState.readOnly)
+            showBuilder(),
           const SizedBox(
             height: 30,
           ),
@@ -266,6 +268,8 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                 //     erd: int.parse(ERD.text),
                 //     converter: Personality(
                 //         int.parse(DATA.text)));
+                print(
+                    'Data Field Length: ${DATA.text.allMatches(' ').length + 1} Bits');
                 saveLocally();
               },
               child: const Text('Create')),
