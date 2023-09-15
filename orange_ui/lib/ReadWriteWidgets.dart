@@ -269,7 +269,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
                 //     converter: Personality(
                 //         int.parse(DATA.text)));
                 print(
-                    'Data Field Length: ${DATA.text.allMatches(' ').length + 1} Bits');
+                    'Data Field Length: ${DATA.text.allMatches(' ').length + 1} bytes');
                 saveLocally();
               },
               child: const Text('Create')),
