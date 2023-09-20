@@ -186,7 +186,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
       geaBus.writeErd(
           address: int.parse(DST.text),
           erd: int.parse(ERD.text),
-          converter: Personality(int.parse(DATA.text)));
+          converter: Personality(int.parse(DATA.text.replaceAll(' ', ''))));
     }
   }
 
@@ -352,7 +352,7 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
           'SRC': SRC.text,
           'DST': DST.text,
           'ERD': ERD.text,
-          'DATA': DATA.text,
+          'DATA': DATA.text.replaceAll(' ', ''),
           'isRead': isSelected[0],
         });
       }
