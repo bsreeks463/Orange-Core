@@ -61,7 +61,12 @@ class _ReadWriteWidgetsState extends State<ReadWriteWidgets> {
       if (message.payload[0] != 161) {
         setMessage('Read Failed');
       } else if (message.payload[0] == 161) {
-        DATA.text = message.payload.last.toString();
+        String data = '';
+
+        message.payload.forEach((p) {
+          data += p.toRadixString(16) + " ";
+        });
+        DATA.text = data.toString().trim();
       }
       if (message.payload[2] == 0) {
         setMessage('Success');
